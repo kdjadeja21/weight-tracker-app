@@ -49,6 +49,7 @@ export const getWeights = async ({ user_id }: { user_id: string }) => {
         minute: "2-digit",
         second: "2-digit",
         hour12: true,
+        timeZone: "Asia/Kolkata",
       });
       weightsData.push({
         id: doc.id,
