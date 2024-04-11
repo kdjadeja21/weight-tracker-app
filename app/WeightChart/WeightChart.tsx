@@ -10,7 +10,7 @@ import { getWeights } from "@/actions/weightActions";
 export interface IWeightData {
   id: string;
   user_id: string;
-  weight: string;
+  weight: number;
   date: string;
 }
 
@@ -44,7 +44,7 @@ const WeightChart: React.FC = () => {
     {
       id: "yJ0lY2KOCEbX8YSqd2Yn",
       user_id: "ksdFStGUL7XBd1DGCf8MpaBRD7y1",
-      weight: "66",
+      weight: 66,
       date: "Feb 13, 2024",
     },
   ]);
@@ -63,8 +63,6 @@ const WeightChart: React.FC = () => {
           user_id: userId,
         });
         const filterData = await getLatestRecords(weights);
-        console.log({ weights });
-        console.log({ filterData });
         setData(filterData);
         setLoading(false);
       }

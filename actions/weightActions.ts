@@ -53,7 +53,7 @@ export const getWeights = async ({ user_id }: { user_id: string }) => {
       weightsData.push({
         id: doc.id,
         user_id: doc.data().user_id,
-        weight: doc.data().weight,
+        weight: parseFloat(doc.data().weight),
         date: formattedDateTime,
       });
     }

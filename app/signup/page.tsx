@@ -2,16 +2,32 @@
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { auth } from "../firebase";
+import { FirebaseError } from "firebase/app";
+import withToaster from "../withToaster";
 
-export default function Signup() {
+const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordAgain, setPasswordAgain] = useState("");
   const router = useRouter();
 
-  const signup = () => {
-    createUserWithEmailAndPassword(auth, email, password);
+  const handleSignup = async () => {
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      setEmail("");
+      setPassword("");
+      setPasswordAgain("");
+      toast.success("Sign Up successfully!");
+      router.push("/signin");
+    } catch (err) {
+      if (err instanceof FirebaseError) {
+        toast.error(err.message.replace("Firebase: ", ""));
+      } else {
+        toast.error("An error occurred.");
+      }
+    }
   };
 
   return (
@@ -37,6 +53,7 @@ export default function Signup() {
                   id="email"
                   name="email"
                   type="email"
+                  value={email}
                   autoComplete="email"
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -59,6 +76,7 @@ export default function Signup() {
                   id="password"
                   name="password"
                   type="password"
+                  value={password}
                   autoComplete="current-password"
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -80,6 +98,7 @@ export default function Signup() {
                   id="passwordAgain"
                   name="passwordAgain"
                   type="password"
+                  value={passwordAgain}
                   autoComplete="current-password"
                   onChange={(e) => setPasswordAgain(e.target.value)}
                   required
@@ -96,7 +115,7 @@ export default function Signup() {
                   !passwordAgain ||
                   password !== passwordAgain
                 }
-                onClick={() => signup()}
+                onClick={() => handleSignup()}
                 className="disabled:opacity-40 flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
               >
                 Sign Up
@@ -116,4 +135,6 @@ export default function Signup() {
       </div>
     </>
   );
-}
+};
+
+export default withToaster(Signup);
