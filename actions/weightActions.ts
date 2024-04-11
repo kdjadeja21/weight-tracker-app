@@ -41,7 +41,7 @@ export const getWeights = async ({ user_id }: { user_id: string }) => {
     (doc: QueryDocumentSnapshot<DocumentData, DocumentData>) => {
       const formattedDateTime = new Date(
         doc.data().date.seconds * 1000
-      ).toLocaleString("en-US", {
+      ).toLocaleString("en-IN", {
         year: "numeric",
         month: "short",
         day: "2-digit",
