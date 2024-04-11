@@ -40,8 +40,6 @@ const WeightChart: React.FC = () => {
     },
   });
 
-  if (!localStorage.getItem("WTAuserId")) redirect("/signin");
-
   const [data, setData] = useState<Array<IWeightData>>([
     {
       id: "yJ0lY2KOCEbX8YSqd2Yn",
@@ -56,6 +54,8 @@ const WeightChart: React.FC = () => {
   const params = useParams();
 
   useEffect(() => {
+    if (!localStorage.getItem("WTAuserId")) redirect("/signin");
+
     let userId = localStorage.getItem("WTAuserId");
     const fetchTodos = async () => {
       if (userId) {
