@@ -1,11 +1,15 @@
 import { useState } from "react";
 import { WeightDialog } from "../WeightDialog/WeightDialog";
+import { useRouter } from "next/navigation";
 
 const FloatingBtn = () => {
   const [isOpen, setIsOpen] = useState(false);
 
+  const router = useRouter();
+
   const toggleOpen = () => {
     setIsOpen(!isOpen);
+    router.push("?add-weight");
   };
 
   return (

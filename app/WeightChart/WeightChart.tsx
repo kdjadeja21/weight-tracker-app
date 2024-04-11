@@ -1,23 +1,10 @@
 "use client";
 
 import { Card, AreaChart, Title, Text } from "@tremor/react";
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
-import {
-  collection,
-  collectionGroup,
-  getDocs,
-  limit,
-  orderBy,
-  query,
-  where,
-} from "firebase/firestore";
-import { db, auth } from "../firebase";
+import { redirect, useParams } from "next/navigation";
 import FloatingBtn from "../FloatingBtn/FloatingBtn";
-import { UseQueryResult, useQuery } from "react-query";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../store";
 import { getWeights } from "@/actions/weightActions";
 
 export interface IWeightData {
@@ -27,13 +14,33 @@ export interface IWeightData {
   date: string;
 }
 
+function getLatestRecords(records: IWeightData[]): IWeightData[] {
+  const latestRecords: { [date: string]: IWeightData } = {};
+
+  // Iterate through each record
+  records.forEach((record: IWeightData) => {
+    const date = record.date.split(",")[0]; // Extracting date part only
+    if (
+      !latestRecords[date] ||
+      new Date(record.date) > new Date(latestRecords[date].date)
+    ) {
+      latestRecords[date] = record;
+    }
+  });
+
+  // Convert the latestRecords object into an array of records
+  return Object.values(latestRecords);
+}
+
 const WeightChart: React.FC = () => {
-  const session = useSession({
+  useSession({
     required: true,
     onUnauthenticated() {
       redirect("/signin");
     },
   });
+
+  if (!localStorage.getItem("WTAuserId")) redirect("/signin");
 
   const [data, setData] = useState<Array<IWeightData>>([
     {
@@ -46,6 +53,8 @@ const WeightChart: React.FC = () => {
 
   const [isLoading, setLoading] = useState(true);
 
+  const params = useParams();
+
   useEffect(() => {
     let userId = localStorage.getItem("WTAuserId");
     const fetchTodos = async () => {
@@ -53,12 +62,15 @@ const WeightChart: React.FC = () => {
         const weights = await getWeights({
           user_id: userId,
         });
-        setData(weights);
+        const filterData = await getLatestRecords(weights);
+        console.log({ weights });
+        console.log({ filterData });
+        setData(filterData);
         setLoading(false);
       }
     };
     fetchTodos();
-  }, []);
+  }, [params]);
 
   return (
     <Card className="mt-8">

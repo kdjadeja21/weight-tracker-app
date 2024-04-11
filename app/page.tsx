@@ -3,8 +3,6 @@ import WeightChart from "./WeightChart/WeightChart";
 import Nav from "./nav";
 import { Suspense } from "react";
 import { useSession } from "next-auth/react";
-import { QueryClientProvider } from "react-query";
-import queryClient from "./queryClient";
 import { Toaster } from "react-hot-toast";
 import { Provider } from "react-redux";
 import store from "./store";
@@ -19,17 +17,15 @@ export default function Home({
     <>
       <Provider store={store}>
         <Toaster />
-        <QueryClientProvider client={queryClient}>
-          {session.status === "authenticated" && (
-            <Suspense>
-              <Nav />
-            </Suspense>
-          )}
-          <main className="p-4 md:p-10 mx-auto max-w-7xl">
-            <WeightChart />
-          </main>
-          {children}
-        </QueryClientProvider>
+        {session.status === "authenticated" && (
+          <Suspense>
+            <Nav />
+          </Suspense>
+        )}
+        <main className="p-4 md:p-10 mx-auto max-w-7xl">
+          <WeightChart />
+        </main>
+        {children}
       </Provider>
     </>
   );
