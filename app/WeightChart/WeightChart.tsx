@@ -33,12 +33,12 @@ function getLatestRecords(records: IWeightData[]): IWeightData[] {
 }
 
 const WeightChart: React.FC = () => {
-  useSession({
-    required: true,
-    onUnauthenticated() {
-      redirect("/signin");
-    },
-  });
+  // useSession({
+  //   required: true,
+  //   onUnauthenticated() {
+  //     redirect("/signin");
+  //   },
+  // });
 
   const [data, setData] = useState<Array<IWeightData>>([
     {
@@ -54,8 +54,7 @@ const WeightChart: React.FC = () => {
   const params = useParams();
 
   useEffect(() => {
-    if (!localStorage.getItem("WTAuserId"))
-      console.log("LocalStorage.getItem not found");
+    if (!localStorage.getItem("WTAuserId")) redirect("/signin");
 
     let userId = localStorage.getItem("WTAuserId");
     const fetchTodos = async () => {
