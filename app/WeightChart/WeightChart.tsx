@@ -54,7 +54,8 @@ const WeightChart: React.FC = () => {
   const params = useParams();
 
   useEffect(() => {
-    if (!localStorage.getItem("WTAuserId")) redirect("/signin");
+    if (!localStorage.getItem("WTAuserId"))
+      console.log("LocalStorage.getItem not found");
 
     let userId = localStorage.getItem("WTAuserId");
     const fetchTodos = async () => {
