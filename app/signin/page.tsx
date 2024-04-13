@@ -45,7 +45,7 @@ const Signin = () => {
         displayName: loginRes.user.displayName,
         email: loginRes.user.email,
       };
-      setIsLoading(false);
+
       await dispatch(login(userData));
       toast.success("Logged in successfully!");
     } catch (error) {
@@ -54,6 +54,7 @@ const Signin = () => {
       } else {
         toast.error("An error occurred.");
       }
+      setIsLoading(false);
     }
   };
 
