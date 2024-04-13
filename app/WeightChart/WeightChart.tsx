@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import { redirect, useParams } from "next/navigation";
 import FloatingBtn from "../FloatingBtn/FloatingBtn";
 import { getWeights } from "@/actions/weightActions";
+import { useRouter } from "next/navigation";
 
 export interface IWeightData {
   id: string;
@@ -33,12 +34,15 @@ function getLatestRecords(records: IWeightData[]): IWeightData[] {
 }
 
 const WeightChart: React.FC = () => {
-  // useSession({
-  //   required: true,
-  //   onUnauthenticated() {
-  //     redirect("/signin");
-  //   },
-  // });
+  const router = useRouter();
+
+  useSession({
+    required: true,
+    onUnauthenticated() {
+      router.push("/signin");
+      // redirect("/signin");
+    },
+  });
 
   const [data, setData] = useState<Array<IWeightData>>([
     {
@@ -54,7 +58,7 @@ const WeightChart: React.FC = () => {
   const params = useParams();
 
   useEffect(() => {
-    if (!localStorage.getItem("WTAuserId")) redirect("/signin");
+    if (!localStorage.getItem("WTAuserId")) router.push("/signin");
 
     let userId = localStorage.getItem("WTAuserId");
     const fetchTodos = async () => {
