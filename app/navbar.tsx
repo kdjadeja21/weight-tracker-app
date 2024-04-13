@@ -19,6 +19,8 @@ function classNames(...classes: string[]) {
 export default function Navbar({ user }: { user: any }) {
   const pathname = usePathname();
 
+  const currentUser = auth?.currentUser;
+
   const handleSignOut = async () => {
     await firebaseSignOut(auth);
     // Remove a variable from local storage
@@ -82,7 +84,7 @@ export default function Navbar({ user }: { user: any }) {
                       <span className="sr-only">Open user menu</span>
                       <Image
                         className="h-8 w-8 rounded-full"
-                        src={user?.image || "https://avatar.vercel.sh/leerob"}
+                        src={"https://picsum.photos/200/300?random=1"}
                         height={32}
                         width={32}
                         alt={`${user?.name || "placeholder"} avatar`}
@@ -128,19 +130,22 @@ export default function Navbar({ user }: { user: any }) {
                           </Menu.Item>
                         </>
                       ) : (
-                        <Menu.Item>
-                          {({ active }) => (
-                            <button
-                              className={classNames(
-                                active ? "bg-gray-100" : "",
-                                "flex w-full px-4 py-2 text-sm text-gray-700"
-                              )}
-                              onClick={() => signIn("github")}
-                            >
-                              Sign in
-                            </button>
-                          )}
-                        </Menu.Item>
+                        <>
+                          <Menu.Item>Test Menu</Menu.Item>
+                          <Menu.Item>
+                            {({ active }) => (
+                              <button
+                                className={classNames(
+                                  active ? "bg-gray-100" : "",
+                                  "flex w-full px-4 py-2 text-sm text-gray-700"
+                                )}
+                                onClick={() => signIn("github")}
+                              >
+                                Sign in
+                              </button>
+                            )}
+                          </Menu.Item>
+                        </>
                       )}
                     </Menu.Items>
                   </Transition>
@@ -185,10 +190,10 @@ export default function Navbar({ user }: { user: any }) {
                     <div className="flex-shrink-0">
                       <Image
                         className="h-8 w-8 rounded-full"
-                        src={user.image}
+                        src={"https://picsum.photos/200/300?random=1"}
                         height={32}
                         width={32}
-                        alt={`${user.name} avatar`}
+                        alt={`${currentUser?.photoURL} avatar`}
                       />
                     </div>
                     <div className="ml-3">
@@ -199,6 +204,11 @@ export default function Navbar({ user }: { user: any }) {
                         {user.email}
                       </div>
                     </div>
+                  </div>
+                  <div className="mt-3 space-y-1 text-sm font-medium text-gray-500">
+                    <button className="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800">
+                      {user.user.email}
+                    </button>
                   </div>
                   <div className="mt-3 space-y-1">
                     <button

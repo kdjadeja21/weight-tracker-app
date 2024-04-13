@@ -3,7 +3,7 @@
 import { Card, AreaChart, Title, Text } from "@tremor/react";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { redirect, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import FloatingBtn from "../FloatingBtn/FloatingBtn";
 import { getWeights } from "@/actions/weightActions";
 import { useRouter } from "next/navigation";
@@ -58,10 +58,10 @@ const WeightChart: React.FC = () => {
   const params = useParams();
 
   useEffect(() => {
-    if (!localStorage.getItem("WTAuserId")) router.push("/signin");
-
-    let userId = localStorage.getItem("WTAuserId");
     const fetchTodos = async () => {
+      if (!localStorage.getItem("WTAuserId")) router.push("/signin");
+
+      let userId = localStorage.getItem("WTAuserId");
       if (userId) {
         const weights = await getWeights({
           user_id: userId,
