@@ -30,6 +30,7 @@ const Signup = () => {
       } else {
         toast.error("An error occurred.");
       }
+      setIsLoading(false);
     }
   };
 
