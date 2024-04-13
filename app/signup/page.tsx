@@ -11,14 +11,17 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordAgain, setPasswordAgain] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleSignup = async () => {
     try {
+      setIsLoading(true);
       await createUserWithEmailAndPassword(auth, email, password);
       setEmail("");
       setPassword("");
       setPasswordAgain("");
+      setIsLoading(false);
       toast.success("Sign Up successfully!");
       router.push("/signin");
     } catch (err) {
@@ -116,9 +119,11 @@ const Signup = () => {
                   password !== passwordAgain
                 }
                 onClick={() => handleSignup()}
-                className="disabled:opacity-40 flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+                className={`flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500  disabled:opacity-50 disabled:pointer-events-none ${
+                  isLoading ? "opacity-40 pointer-events-none" : ""
+                }`}
               >
-                Sign Up
+                {isLoading ? "Signing Up..." : "Sign Up"}
               </button>
             </div>
           </div>
