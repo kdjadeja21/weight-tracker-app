@@ -1,8 +1,10 @@
-import React, { useState, SetStateAction, Dispatch } from "react";
+import React, { useState, SetStateAction, Dispatch, useReducer } from "react";
 import { Button, Dialog, DialogPanel } from "@tremor/react";
-import { addWeight } from "@/actions/weightActions";
+import { addWeight, updateWeight } from "@/actions/weightActions";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import reducer from "../store/index";
+import { useSelector } from "react-redux";
 
 export function WeightDialog({
   isOpen,
@@ -16,6 +18,9 @@ export function WeightDialog({
   const [error, setError] = useState("");
 
   const router = useRouter();
+  const todayWeightRecord = useSelector(
+    (state: any) => state.weight.todayWeightRecord
+  );
 
   const handleSubmit = async () => {
     if (!weight) {
@@ -37,10 +42,16 @@ export function WeightDialog({
 
     let userId = await localStorage.getItem("WTAuserId");
 
-    userId && (await addWeight({ user_id: userId, weight: weight }));
-
-    toast.success("Weight Added!");
-    // queryClient.invalidateQueries("userWeights");
+    if (todayWeightRecord.length) {
+      await updateWeight({
+        documentId: todayWeightRecord[0].id,
+        weight: parseFloat(weight),
+      });
+      toast.success("Today's Weight Updated!");
+    } else {
+      userId && (await addWeight({ user_id: userId, weight: weight }));
+      toast.success("Weight Added!");
+    }
 
     // Close the dialog
     setWeight("");
