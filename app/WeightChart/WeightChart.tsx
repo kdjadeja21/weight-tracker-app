@@ -8,6 +8,8 @@ import FloatingBtn from "../FloatingBtn/FloatingBtn";
 import { getWeights } from "@/actions/weightActions";
 import { useRouter } from "next/navigation";
 import Loading from "../Loading/Loading";
+import { setTodayWeightRecord } from "../store/reducers/weightSlice";
+import { useDispatch } from "react-redux";
 
 export interface IWeightData {
   id: string;
@@ -36,6 +38,7 @@ function getLatestRecords(records: IWeightData[]): IWeightData[] {
 
 const WeightChart: React.FC = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
 
   useSession({
     required: true,
@@ -61,6 +64,11 @@ const WeightChart: React.FC = () => {
           user_id: userId,
         });
         const filterData = await getLatestRecords(weights);
+        const todayWeightRecord = filterData.filter(
+          (row) =>
+            new Date(row.date).toDateString() === new Date().toDateString()
+        );
+        await dispatch(setTodayWeightRecord(todayWeightRecord));
         setData(filterData);
         setLoading(false);
       }
