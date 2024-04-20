@@ -5,28 +5,15 @@ import {
   addDoc,
   getDocs,
   query,
-  collectionGroup,
   where,
   orderBy,
   QueryDocumentSnapshot,
   DocumentData,
+  doc,
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "../app/firebase";
 import { IWeightData } from "@/app/WeightChart/WeightChart";
-
-export const addWeight = async ({
-  user_id,
-  weight,
-}: {
-  user_id: string;
-  weight: string;
-}) => {
-  await addDoc(collection(db, "weight"), {
-    user_id: user_id,
-    weight: weight,
-    date: new Date(),
-  });
-};
 
 export const getWeights = async ({ user_id }: { user_id: string }) => {
   const weightQuery = query(
@@ -60,4 +47,33 @@ export const getWeights = async ({ user_id }: { user_id: string }) => {
     }
   );
   return weightsData;
+};
+
+export const addWeight = async ({
+  user_id,
+  weight,
+}: {
+  user_id: string;
+  weight: string;
+}) => {
+  await addDoc(collection(db, "weight"), {
+    user_id: user_id,
+    weight: weight,
+    date: new Date(),
+  });
+};
+
+export const updateWeight = async ({
+  documentId,
+  weight,
+}: {
+  documentId: string;
+  weight: number;
+}) => {
+  try {
+    const docRef = await doc(db, "weight", documentId);
+    await updateDoc(docRef, { weight: weight, date: new Date() });
+  } catch (err) {
+    console.log({ err });
+  }
 };
