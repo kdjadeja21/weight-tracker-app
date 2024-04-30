@@ -1,36 +1,30 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Weight Tracking App
 
-## Getting Started
+Introducing our cutting-edge Weight Tracking App, meticulously crafted to empower users on their journey towards healthier living. With a seamless blend of intuitive design and advanced technology, our app is your ultimate companion for tracking and visualizing your weight progress effortlessly. Here's why you'll love it:
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- #### Effortless Signin/Signup:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+  Get started in seconds with a hassle-free signin/signup process. Whether you're a new user or returning, we've streamlined the experience to ensure you're up and running in no time.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- #### Password Reset:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+  Forgot your password? No problem. Our app makes it easy to reset your password securely, giving you peace of mind and uninterrupted access to your weight tracking journey.
 
-## Learn More
+- #### Track and Visualize Progress:
 
-To learn more about Next.js, take a look at the following resources:
+  Say goodbye to cumbersome spreadsheets and hello to insightful data visualization. Track your weight fluctuations with precision and clarity, thanks to our intuitive interface. Visualize your progress over time with customizable charts and graphs, empowering you to make informed decisions about your health.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- #### Powered by Cutting-Edge Technology:
+  Built with industry-leading technologies including NextJS, ReactJS, Typescript, react-redux, react-hot-toast, firebase, and tailwind CSS, our app delivers unparalleled performance, reliability, and user experience.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Demo
 
-## Deploy on Vercel
+https://weight-tracking-app.vercel.app/
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- #### Demo User
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+  Email: test21@test.com
+
+  Password: test@123
