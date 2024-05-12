@@ -2,7 +2,9 @@ name: CI/CD for WTA
 
 on:
   pull-pull_request:
-    branches: [master, develop]
+    branches:
+      - master
+      - develop
 
 jobs:
   test_and_build:
