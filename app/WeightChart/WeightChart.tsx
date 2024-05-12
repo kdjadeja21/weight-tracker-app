@@ -13,11 +13,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
 import FloatingBtn from "../FloatingBtn/FloatingBtn";
-import {
-  getWeights,
-  getTargetedWeight,
-  updateTargetedWeight,
-} from "@/actions/weightActions";
+import { getWeights, getTargetedWeight } from "@/actions/weightActions";
 import { useRouter } from "next/navigation";
 import Loading from "../Loading/Loading";
 import {
@@ -72,37 +68,41 @@ const WeightChart: React.FC = () => {
 
   const params = useParams();
 
-  useEffect(() => {
-    const fetchWeights = async () => {
-      if (!localStorage.getItem("WTAuserId")) router.push("/signin");
+  useEffect(
+    () => {
+      const fetchWeights = async () => {
+        if (!localStorage.getItem("WTAuserId")) router.push("/signin");
 
-      let userId = localStorage.getItem("WTAuserId");
-      if (userId) {
-        const targetedWeight: ITargetedWeight | undefined =
-          await getTargetedWeight({
+        let userId = localStorage.getItem("WTAuserId");
+        if (userId) {
+          const targetedWeight: ITargetedWeight | undefined =
+            await getTargetedWeight({
+              user_id: userId,
+            });
+          if (targetedWeight && Object.keys(targetedWeight).length !== 0) {
+            setTargetedWeight(targetedWeight.targeted_weight);
+
+            await dispatch(setTargetedWeightRecord(targetedWeight));
+          }
+
+          const weights = await getWeights({
             user_id: userId,
           });
-        if (targetedWeight && Object.keys(targetedWeight).length !== 0) {
-          setTargetedWeight(targetedWeight.targeted_weight);
-
-          await dispatch(setTargetedWeightRecord(targetedWeight));
+          const filterData = await getLatestRecords(weights);
+          const todayWeightRecord = filterData.filter(
+            (row) =>
+              new Date(row.date).toDateString() === new Date().toDateString()
+          );
+          await dispatch(setTodayWeightRecord(todayWeightRecord));
+          setData(filterData);
+          setLoading(false);
         }
-
-        const weights = await getWeights({
-          user_id: userId,
-        });
-        const filterData = await getLatestRecords(weights);
-        const todayWeightRecord = filterData.filter(
-          (row) =>
-            new Date(row.date).toDateString() === new Date().toDateString()
-        );
-        await dispatch(setTodayWeightRecord(todayWeightRecord));
-        setData(filterData);
-        setLoading(false);
-      }
-    };
-    fetchWeights();
-  }, [params]);
+      };
+      fetchWeights();
+    },
+    // eslint-disable-next-line
+    [params]
+  );
 
   const checkWeightStatus = (): string => {
     if (data[data.length - 1].weight > data[data.length - 2].weight)
