@@ -14,6 +14,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../app/firebase";
 import { IWeightData } from "@/app/WeightChart/WeightChart";
+import { ITargetedWeight } from "@/app/types";
 
 export const getWeights = async ({ user_id }: { user_id: string }) => {
   const weightQuery = query(
@@ -73,6 +74,68 @@ export const updateWeight = async ({
   try {
     const docRef = await doc(db, "weight", documentId);
     await updateDoc(docRef, { weight: weight, date: new Date() });
+  } catch (err) {
+    console.log({ err });
+  }
+};
+
+export const getTargetedWeight = async ({ user_id }: { user_id: string }) => {
+  let targetedWeightData: ITargetedWeight | null = null;
+
+  try {
+    const targetedWeightQuery = query(
+      collection(db, "targeted_weight"),
+      where("user_id", "==", user_id)
+    );
+
+    const querySnapshot = await getDocs(targetedWeightQuery);
+
+    targetedWeightData = {} as ITargetedWeight;
+
+    await querySnapshot.docs.forEach(
+      (doc: QueryDocumentSnapshot<DocumentData, DocumentData>) => {
+        targetedWeightData = {
+          id: doc.id,
+          user_id: doc.data().user_id,
+          targeted_weight: parseFloat(doc.data().targeted_weight),
+        };
+      }
+    );
+
+    return targetedWeightData;
+  } catch (err) {
+    console.log({ err });
+  }
+};
+
+export const addTargetedWeight = async ({
+  user_id,
+  weight,
+}: {
+  user_id: string;
+  weight: number;
+}) => {
+  try {
+    await addDoc(collection(db, "targeted_weight"), {
+      user_id: user_id,
+      targeted_weight: weight,
+      date: new Date(),
+    });
+  } catch (err) {
+    console.log({ err });
+  }
+};
+
+export const updateTargetedWeight = async ({
+  documentId,
+  weight,
+}: {
+  documentId: string;
+  weight: number;
+}) => {
+  try {
+    const docRef = await doc(db, "targeted_weight", documentId);
+    await updateDoc(docRef, { targeted_weight: weight, date: new Date() });
   } catch (err) {
     console.log({ err });
   }

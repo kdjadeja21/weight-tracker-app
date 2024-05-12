@@ -9,6 +9,7 @@ import { signOut as firebaseSignOut } from "firebase/auth";
 import Image from "next/image";
 import { auth } from "./firebase";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const navigation = [{ name: "Dashboard", href: "/" }];
 
@@ -18,6 +19,7 @@ function classNames(...classes: string[]) {
 
 export default function Navbar({ user }: { user: any }) {
   const pathname = usePathname();
+  const router = useRouter();
 
   const currentUser = auth?.currentUser;
 
@@ -106,6 +108,7 @@ export default function Navbar({ user }: { user: any }) {
                           <Menu.Item>
                             {({ active }) => (
                               <button
+                                onClick={() => router.push("/profile")}
                                 className={classNames(
                                   active ? "bg-gray-100" : "",
                                   "flex w-full px-4 py-2 text-sm text-gray-700"
@@ -206,7 +209,10 @@ export default function Navbar({ user }: { user: any }) {
                     </div>
                   </div>
                   <div className="mt-3 space-y-1 text-sm font-medium text-gray-500">
-                    <button className="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800">
+                    <button
+                      className="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
+                      onClick={() => router.push("/profile")}
+                    >
                       {user.user.email}
                     </button>
                   </div>
