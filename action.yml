@@ -14,3 +14,5 @@ jobs:
         run: npm install
       - name: Build Project
         run: npm run build
+      - name: Check Linting
+        run: next lint
