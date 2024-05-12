@@ -9,8 +9,9 @@ on:
       - bugfix/*
       - hotfix/*
       - enhancement/*
+  workflow_dispatch:
 
-jobs:
+jobs:      
   test_and_build:
     runs-on: ubuntu-latest
     steps:
@@ -20,7 +21,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20
-  
+      - name: Install Dependencies
+        run: npm install
       - name: Build Project
         run: npm run build
       - name: Check Linting
