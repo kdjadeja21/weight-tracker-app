@@ -10,8 +10,6 @@ jobs:
   test_and_build:
     runs-on: ubuntu-latest
     steps:
-      - name: Install Dependencies
-        run: npm install
       - name: Build Project
         run: npm run build
       - name: Check Linting
