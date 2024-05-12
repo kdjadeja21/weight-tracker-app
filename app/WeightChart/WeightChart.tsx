@@ -1,15 +1,31 @@
 "use client";
 
-import { Card, AreaChart, Title, Text } from "@tremor/react";
+import {
+  Card,
+  AreaChart,
+  Title,
+  Text,
+  Metric,
+  BadgeDelta,
+  Flex,
+} from "@tremor/react";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
 import FloatingBtn from "../FloatingBtn/FloatingBtn";
-import { getWeights } from "@/actions/weightActions";
+import {
+  getWeights,
+  getTargetedWeight,
+  updateTargetedWeight,
+} from "@/actions/weightActions";
 import { useRouter } from "next/navigation";
 import Loading from "../Loading/Loading";
-import { setTodayWeightRecord } from "../store/reducers/weightSlice";
+import {
+  setTodayWeightRecord,
+  setTargetedWeightRecord,
+} from "../store/reducers/weightSlice";
 import { useDispatch } from "react-redux";
+import { ITargetedWeight } from "../types";
 
 export interface IWeightData {
   id: string;
@@ -52,14 +68,26 @@ const WeightChart: React.FC = () => {
 
   const [isLoading, setLoading] = useState(true);
 
+  const [targetedWeight, setTargetedWeight] = useState<number>(0);
+
   const params = useParams();
 
   useEffect(() => {
-    const fetchTodos = async () => {
+    const fetchWeights = async () => {
       if (!localStorage.getItem("WTAuserId")) router.push("/signin");
 
       let userId = localStorage.getItem("WTAuserId");
       if (userId) {
+        const targetedWeight: ITargetedWeight | undefined =
+          await getTargetedWeight({
+            user_id: userId,
+          });
+        if (targetedWeight && Object.keys(targetedWeight).length !== 0) {
+          setTargetedWeight(targetedWeight.targeted_weight);
+
+          await dispatch(setTargetedWeightRecord(targetedWeight));
+        }
+
         const weights = await getWeights({
           user_id: userId,
         });
@@ -73,30 +101,81 @@ const WeightChart: React.FC = () => {
         setLoading(false);
       }
     };
-    fetchTodos();
+    fetchWeights();
   }, [params]);
+
+  const checkWeightStatus = (): string => {
+    if (data[data.length - 1].weight > data[data.length - 2].weight)
+      return "increase";
+    else if (data[data.length - 1].weight < data[data.length - 2].weight)
+      return "decrease";
+    else if (data[data.length - 1].weight === data[data.length - 2].weight)
+      return "unchanged";
+    else return "unchanged";
+  };
 
   if (isLoading) return <Loading />;
 
+  const deltaType: string = checkWeightStatus();
+  const weightMessage: string =
+    deltaType === "increase"
+      ? "Weight is increasing"
+      : deltaType === "decrease"
+      ? "Weight is decreasing"
+      : "No change in weight status";
+
   return (
-    <Card className="mt-8">
-      <Title>Weight Tracker Chart</Title>
-      <Text>Weight History</Text>
-      {isLoading ? (
-        <Loading isTitle={false} />
-      ) : (
-        <AreaChart
-          className="mt-4 h-80"
-          data={data}
-          categories={["weight"]}
-          index="date"
-          colors={["indigo", "fuchsia"]}
-          valueFormatter={(number: number) => `${number} KG`}
-          yAxisWidth={60}
-        />
-      )}
-      <FloatingBtn />
-    </Card>
+    <>
+      <div className="grid grid-cols-2 gap-4 justify-center">
+        <Card decoration="top">
+          <Flex>
+            <Metric>{targetedWeight}</Metric>
+            <BadgeDelta
+              deltaType={
+                data[data.length - 1].weight > targetedWeight
+                  ? "increase"
+                  : "decrease"
+              }
+            ></BadgeDelta>
+          </Flex>
+          <Text>Targeted Weight</Text>
+        </Card>
+
+        <Card decoration="top">
+          <Flex>
+            <Metric>{data[data.length - 1].weight}</Metric>
+            <BadgeDelta deltaType={deltaType} tooltip={weightMessage}>
+              {deltaType === "increase"
+                ? (
+                    data[data.length - 1].weight - data[data.length - 2].weight
+                  ).toFixed(2)
+                : (
+                    data[data.length - 2].weight - data[data.length - 1].weight
+                  ).toFixed(2)}
+            </BadgeDelta>
+          </Flex>
+          <Text>Current Weight</Text>
+        </Card>
+      </div>
+      <Card className="mt-8">
+        <Title>Weight Tracker Chart</Title>
+        <Text>Weight History</Text>
+        {isLoading ? (
+          <Loading isTitle={false} />
+        ) : (
+          <AreaChart
+            className="mt-4 h-80"
+            data={data}
+            categories={["weight"]}
+            index="date"
+            colors={["indigo", "fuchsia"]}
+            valueFormatter={(number: number) => `${number} KG`}
+            yAxisWidth={60}
+          />
+        )}
+        <FloatingBtn />
+      </Card>
+    </>
   );
 };
 
