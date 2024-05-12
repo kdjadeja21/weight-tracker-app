@@ -15,4 +15,6 @@ jobs:
       - name: Build Project
         run: npm run build
       - name: Check Linting
-        run: next lint
+        run: npm run lint
+      - name: Check Linting Coverage
+        run: npm run lint --coverage
