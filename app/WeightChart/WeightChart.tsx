@@ -68,6 +68,37 @@ const WeightChart: React.FC = () => {
 
   const params = useParams();
 
+  const [dateRange, setDateRange] = useState<string>("All");
+
+  const filterDataByDateRange = (data: Array<IWeightData>, range: string): Array<IWeightData> => {
+    const today = new Date();
+    let startDate: Date;
+
+    switch (range) {
+      case "Last 07 days":
+        startDate = new Date(today.setDate(today.getDate() - 7));
+        break;
+      case "Last 15 days":
+        startDate = new Date(today.setDate(today.getDate() - 15));
+        break;
+      case "Last one month":
+        startDate = new Date(today.setMonth(today.getMonth() - 1));
+        break;
+      case "All":
+      default:
+        return data; // No filtering
+    }
+
+    return data.filter(record => new Date(record.date) >= startDate);
+  };
+
+  const handleDateRangeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    console.log("Selected date range:", event.target.value); // Debugging line
+    setDateRange(event.target.value);
+  };
+
+  const filteredData = filterDataByDateRange(data, dateRange);
+
   useEffect(
     () => {
       const fetchWeights = async () => {
@@ -160,12 +191,24 @@ const WeightChart: React.FC = () => {
       <Card className="mt-8">
         <Title>Weight Tracker Chart</Title>
         <Text>Weight History</Text>
+        <div className="flex justify-end mb-4">
+          <select 
+            value={dateRange} 
+            onChange={handleDateRangeChange}
+            className="block w-40 px-3 py-2 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+          >
+            <option value="Last 07 days">Last 07 days</option>
+            <option value="Last 15 days">Last 15 days</option>
+            <option value="Last one month">Last one month</option>
+            <option value="All">All</option>
+          </select>
+        </div>
         {isLoading ? (
           <Loading isTitle={false} />
         ) : (
           <AreaChart
             className="mt-4 h-80"
-            data={data}
+            data={filteredData}
             categories={["weight"]}
             index="date"
             colors={["indigo", "fuchsia"]}
